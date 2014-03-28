@@ -1,0 +1,143 @@
+* {
+border: 0;
+padding: 0;
+margin: 0;
+}
+html, body {
+width: 100%;
+height: 100%;
+}
+.nano-wrap{
+	position: absolute;	
+	background: #000;
+	width: 980px;
+	height: 400px;
+	left: 500px;
+}
+.nano-ui{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	z-index: 1;
+	color: #fff;
+}
+.nano-controls{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 20px;
+	background-color: #333;
+	background-color: rgba(51,51,51,0.6);
+}
+.nano-play{
+	color: #fff;
+display: block;
+float: left;
+margin-left: 5px;
+}
+
+.nano-timeline{
+background: #666;
+height: 50%;
+float: left;
+width: 53%;
+margin-top: 5px;
+margin-left: 5px;
+position: relative;
+}
+.nano-buffer,.nano-progress{
+	height: 100%;
+	position: absolute;
+}
+.nano-buffer{
+	background-color: #fff;
+}
+.nano-progress{
+	background-color: #00a7c8;
+}
+.nano-time{
+	float: left;
+	margin-left: 5px;
+	font-size: 14px;
+	font-weight: bold;
+}
+.nano-volume{
+	float: left;
+	height: 100%;
+	margin-left: 5px;
+	margin-top: 7px;
+}
+.nano-mute{
+	background: #fff;
+	width: 5px;
+	height: 5px;
+	position: absolute;
+}
+.nano-mute:before,
+.nano-mute:after{
+	content: "";
+	position: absolute;
+}
+.nano-mute:before{
+	left: -6px;
+	border: 7px solid transparent;
+	border-right-color: #fff;
+	margin-top: -5px;
+	background: transparent;
+}
+
+.nano-mute.active:after{
+	border-top: 2px solid red;
+	-webkit-transform: rotate(-48deg);
+	left: 2px;
+	top: -2px;
+	height: 14px;
+	width: 17px;
+}
+
+.nano-volumeslider{
+	background:#000;
+	width: 70px;
+	height: 5px;
+	margin-left: 15px;
+}
+.nano-volumelevel{
+	height: 100%;
+	background: #fff;
+}
+.nano-fullscreen{
+	float: left;
+	margin-top: 3px;
+	background: #fff;
+	width: 15px;
+	height: 13px;
+	margin-left: 5px;
+	position: relative;
+	border-radius: 0.5px;
+	
+}
+.nano-fullscreen:before{
+	content: "";
+	position: absolute;
+	width: 9px;
+	height: 7px;
+	margin: 1px;
+	background: #555;
+	-webkit-transition: all 1s;
+	-moz-transition: all 1s;
+	-ms-transition: all 1s;
+	-o-transition: all 1s;
+	transition: all 1s;
+}
+.nano-fullscreen:hover:before{
+	width: 13px;
+	height: 10px;
+	-webkit-transition: all 1s;
+	-moz-transition: all 1s;
+	-ms-transition: all 1s;
+	-o-transition: all 1s;
+	transition: all 1s;
+}
