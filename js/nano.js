@@ -1,6 +1,6 @@
 var Nano = function(el, tracks, config) {
   var _default = {
-    videoWidth: 900,
+    videoWidth: 1200,
     videoHeight: 480,
     autoplay: false,
     controls: true,
@@ -95,7 +95,7 @@ Nano.prototype = {
     this.player.width = this.config.videoWidth;
     this.player.height = this.config.videoHeight;
     uihtml = '<div class="nano-controls">';
-    uihtml += '<a class="nano-play">&#9658;</a>';
+    uihtml += '<a class="nano-play"></a>';
     uihtml += '<div class="nano-timeline" id="nano-timeline">';
     uihtml += '<div class="nano-buffer" style="width: 53.425665096933315%;"></div>';
     uihtml += '  <div class="nano-progress" style="width: 36.3%;"></div>';

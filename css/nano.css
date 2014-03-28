@@ -12,7 +12,7 @@ height: 100%;
 	background: #000;
 	width: 980px;
 	height: 400px;
-	left: 500px;
+	
 }
 .nano-ui{
 	position: absolute;
@@ -32,21 +32,46 @@ height: 100%;
 	background-color: #333;
 	background-color: rgba(51,51,51,0.6);
 }
-.nano-play{
+.nano-play,.nano-pause{
 	color: #fff;
-display: block;
-float: left;
-margin-left: 5px;
+	float: left;
+	margin-left: 10px;
+	display: block;
+	position: relative;
+	width: 15px;
+	height: 100%;
 }
-
+.nano-play:before {
+	position: absolute;
+	content: "";
+	left: 1px;
+	border: 8px solid transparent;
+	border-left-color: #fff;
+	margin-top: 2px;
+	background: transparent;
+}
+.nano-pause:before,
+.nano-pause:after{
+	position: absolute;
+	content: "";
+	height: 50%;
+	margin-top: 5px;
+	border-left: 2px solid #fff;
+}
+.nano-pause:before{
+	left: 0;
+}
+.nano-pause:after{
+	left: 6px;
+}
 .nano-timeline{
-background: #666;
-height: 50%;
-float: left;
-width: 53%;
-margin-top: 5px;
-margin-left: 5px;
-position: relative;
+	background: #666;
+	height: 50%;
+	float: left;
+	width: 53%;
+	margin-top: 5px;
+	margin-left: 5px;
+	position: relative;
 }
 .nano-buffer,.nano-progress{
 	height: 100%;
