@@ -173,3 +173,8 @@ Nano.find = function(el) {
     return document.getElementsByTagName(el);
   }
 }
+//Dom Realted operations
+Nano.dom = {};
+Nano.dom.removeClass = function(el, cn) {
+  el.classList.remove(cn);
+}
