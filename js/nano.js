@@ -1,9 +1,9 @@
-var Nano = function(el, tracks, config) {
+var Nano = function (el, tracks, config) {
   var _default = {
-    videoWidth: 1200,
+    videoWidth: 600,
     videoHeight: 480,
     autoplay: false,
-    controls: true,
+    controls: false,
     draggable: true,
   };
   this.el = el;
@@ -11,6 +11,8 @@ var Nano = function(el, tracks, config) {
   Nano.Obj.extend(_default, config);
   this.config = _default;
   this.muted = false;
+  this.fullscreen = false;
+  this.isplaying = _default.autoplay;
   this.dragReady = false;
   this.dragoffset = {
     x: 0,
@@ -20,86 +22,55 @@ var Nano = function(el, tracks, config) {
   this.init();
 };
 Nano.prototype = {
-  init: function() {
+  init: function () {
     this.buildUI();
-    this.uiOnDemand();
-    this.play();
     this.events();
+    this.load();
   },
-  events: function() {
+  events: function () {
     var self = this,
-      play = Nano.find('.nano-play'),
+      play = Nano.find('.nano-play-pause'),
       mute = Nano.find('.nano-mute'),
-      wrap = Nano.find('.nano-wrap');
+      wrap = Nano.find('.nano-wrap'),
+      volume = Nano.find('.nano-volumeslider'),
+      fs = Nano.find('.nano-fullscreen');
 
-    $(wrap).draggable({
-      helper: function() {
-        // Create an invisible div as the helper. It will move and
-        // follow the cursor as usual.
-        return $('<div></div>').css('opacity', 0);
-      },
-      drag: function(event, ui) {
-        // During dragging, animate the original object to
-        // follow the invisible helper with custom easing.
-        var p = ui.helper.position();
-        $(this).stop().animate({
-          top: p.top,
-          left: p.left
-        }, 1000, 'easeOutCirc');
-      }
+    self.draggablePlayer();
+    Nano.on(play, 'click', function () {
+      self.play(play);
     });
-    console.log(mute);
-    Nano.on(play, 'click', function() {
-
-    });
-    Nano.on(mute, 'click', function() {
-      alert("hi");
+    Nano.on(mute, 'click', function () {
       self.mute(mute);
     });
-    Nano.on(wrap, 'mousedown', function(e) {
-      self.dragReady = true;
-      wrap.className += " active";
-      self.dragoffset.x = e.pageX - wrap.offsetLeft;
-      self.dragoffset.y = e.pageY - wrap.offsetTop;
+
+    Nano.on(fs, 'click', function () {
+      self.fullScreen();
     });
-    Nano.on(wrap, 'mouseup', function() {
-      self.dragReady = false;
-    });
-    Nano.on(wrap, 'mousemove', function(e) {
-      if (self.dragReady) {
-        // console.log(e.x);
-        // var y = wrap.offsetTop;
-        // var x = wrap.offsetLeft;
-        // console.log(self.dragoffset);
-        // wrap.style.top = e.pageY - self.dragoffset.y;
-        // wrap.style.left = e.pageX - self.dragoffset.x;
-        // console.log(wrap);
-        // setTimeout(function() {
-        //   var y = wrap.offsetTop;
-        //   var x = wrap.offsetLeft;
-        //   wrap.style.top = y + e.clientY;
-        //   wrap.style.left = x + e.clientX;
-        // }, 3000);
-      }
+    //player events
+    Nano.on(self.player, 'timeupdate', function () {
+      self.updateTime();
+      self.updateProgress();
     });
   },
-  buildUI: function() {
+  buildUI: function () {
     var uihtml, ui = document.createElement('div'),
       wrap = document.createElement("div");
     wrap.className = "nano-wrap";
-    wrap.draggable = this.config.draggable;
+    // wrap.draggable = this.config.draggable;
     wrap.id = "nano-player";
     wrap.style.width = this.config.videoWidth + "px";
     wrap.style.height = this.config.videoHeight + "px";
     ui.className = "nano-ui";
     this.player.width = this.config.videoWidth;
     this.player.height = this.config.videoHeight;
+    this.player.controls = false;
     uihtml = '<div class="nano-controls">';
-    uihtml += '<a class="nano-play"></a>';
     uihtml += '<div class="nano-timeline" id="nano-timeline">';
     uihtml += '<div class="nano-buffer" style="width: 53.425665096933315%;"></div>';
     uihtml += '  <div class="nano-progress" style="width: 36.3%;"></div>';
     uihtml += '</div>';
+
+    uihtml += '<a class="nano-play-pause nano-play"></a>';
     uihtml += ' <div class="nano-time">';
     uihtml += '   <b class="nano-elapsed">00:14</b>';
     uihtml += '   <b>/</b>';
@@ -117,36 +88,105 @@ Nano.prototype = {
     wrap.appendChild(ui);
     wrap.appendChild(this.player);
     document.body.appendChild(wrap);
-    this.uiOnDemand();
+    // this.controlsUiAuto();
   },
-  play: function() {
-    this.player.src = this.tracks[0].src;
-    // this.player.play();
-  },
-  pause: function() {
-    this.player.pause();
-  },
-  mute: function(mute) {
-    if (this.muted) {
-      this.muted = false;
-      mute.className = "active";
+  play: function (p) {
+    if (this.isplaying) {
+      this.isplaying = false;
+      this.player.pause();
+      p.className += ' nano-play';
+      Nano.dom.removeClass(p, 'nano-pause');
     } else {
-      this.muted = true;
+      this.isplaying = true;
+      this.player.play();
+      p.className += ' nano-pause';
+      Nano.dom.removeClass(p, 'nano-play');
     }
   },
-  uiOnDemand: function() {
+  load: function (i) {
+    var self = this;
+    i = i || 0;
+    this.player.src = this.tracks[i].src;
+    this.player.load();
+    //this.timeRest();
+  },
+  mute: function (mute) {
+    if (this.muted) {
+      this.muted = false;
+      Nano.dom.removeClass(mute, "active");
+      this.player.muted = false;
+    } else {
+      this.muted = true;
+      mute.className += " active";
+      this.player.muted = true;
+    }
+  },
+  volume: function () {
+    if (direction === '+') mediaPlayer.volume += mediaPlayer.volume == 1 ? 0 : 0.1;
+    else mediaPlayer.volume -= (mediaPlayer.volume == 0 ? 0 : 0.1);
+    mediaPlayer.volume = parseFloat(mediaPlayer.volume).toFixed(1);
+  },
+  fullScreen: function () {
+    if (this.fullscreen) {
+      this.fullscreen = false;
+      Nano.dom.exitFullscreen();
+    } else {
+      this.fullscreen = true;
+      Nano.dom.requestFullscreen(this.player);
+    }
+    return this;
+  },
+  controlsUiAuto: function () {
     var tline = document.getElementById('nano-timeline');
     if (this.config.videoWidth >= 320) {
       tline.style.width = (((this.config.videoWidth - 225) / this.config.videoWidth) * 100) + "%";
     }
   },
-  playerPosition: function() {
-
+  updateTime: function () {
+    console.log(this.player.currentTime);
+    var current = Nano.find('.nano-elapsed'),
+      total = Nano.find('.nano-duration');
+    progress = Nano.find('.nano-progress');
+    current.innerHTML = Nano.util.formatTime(this.player.currentTime);
+    total.innerHTML = Nano.util.formatTime(this.player.duration);
+  },
+  updateProgress: function () {
+    var self = this;
+    progress = Nano.find('.nano-progress'),
+    buffer = Nano.find('.nano-buffer'),
+    progressval = Math.floor((100 / self.player.duration) *
+      self.player.currentTime),
+    bufferval = self.player.buffered.end(self.player.buffered.length - 1)
+    progress.style.width = progressval + '%';
+    buffer.style.width = bufferval + '%';
+  },
+  timeRest: function () {
+    this.player.currentTime = 0;
+    this.player.duration = 0;
+  },
+  draggablePlayer: function () {
+    var self = this,
+      wrap = Nano.find('.nano-wrap');
+    Nano.on(wrap, 'mousedown', function (e) {
+      self.dragReady = true;
+      self.dragoffset.x = e.pageX - wrap.offsetLeft;
+      self.dragoffset.y = e.pageY - wrap.offsetTop;
+    });
+    Nano.on(document.body, 'mouseup', function () {
+      self.dragReady = false;
+      Nano.off(wrap, 'mousemove');
+    });
+    Nano.on(document.body, 'mousemove', function (e) {
+      if (self.dragReady) {
+        wrap.style.top = (e.pageY - self.dragoffset.y) + "px";
+        wrap.style.left = (e.pageX - self.dragoffset.x) + "px";
+      }
+    });
   }
 };
 //Obect Related functions 
 Nano.Obj = {};
-Nano.Obj.extend = function(a, b) {
+Nano.Obj.extend = function (a, b) {
   var key;
   for (key in b) {
     if (b.hasOwnProperty(key)) {
@@ -155,13 +195,13 @@ Nano.Obj.extend = function(a, b) {
   }
 };
 //Events:
-Nano.on = function(el, event, fn) {
+Nano.on = function (el, event, fn) {
   el.addEventListener(event, fn, false);
 };
-Nano.off = function(el, event) {
-  el.removeEventListener(event, fn);
+Nano.off = function (el, event) {
+  el.removeEventListener(event);
 };
-Nano.find = function(el) {
+Nano.find = function (el) {
   var
   sbl = el.slice(0, 1);
   el = el.slice(1);
@@ -175,6 +215,37 @@ Nano.find = function(el) {
 }
 //Dom Realted operations
 Nano.dom = {};
-Nano.dom.removeClass = function(el, cn) {
+Nano.dom.removeClass = function (el, cn) {
   el.classList.remove(cn);
+}
+Nano.dom.requestFullscreen = function (el) {
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
+Nano.dom.exitFullscreen = function () {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+}
+
+//utilities          
+Nano.util = {};
+Nano.util.formatTime = function (seconds) {
+  var date = new Date(1970, 0, 1);
+  date.setSeconds(seconds);
+  date.getMinutes();
+  date.getSeconds();
+  date.getHours();
+  return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
 }

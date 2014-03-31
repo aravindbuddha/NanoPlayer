@@ -12,7 +12,11 @@ height: 100%;
 	background: #000;
 	width: 980px;
 	height: 400px;
-	
+	-webkit-transition: all 1s;
+	-moz-transition: all 1s;
+	-ms-transition: all 1s;
+	-o-transition: all 1s;
+	transition: all 1s;
 }
 .nano-ui{
 	position: absolute;
@@ -28,7 +32,7 @@ height: 100%;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	height: 20px;
+	height: 25px;
 	background-color: #333;
 	background-color: rgba(51,51,51,0.6);
 }
@@ -45,9 +49,9 @@ height: 100%;
 	position: absolute;
 	content: "";
 	left: 1px;
-	border: 8px solid transparent;
+	border: 7px solid transparent;
 	border-left-color: #fff;
-	margin-top: 2px;
+	margin-top: 3px;
 	background: transparent;
 }
 .nano-pause:before,
@@ -66,12 +70,13 @@ height: 100%;
 }
 .nano-timeline{
 	background: #666;
-	height: 50%;
+	height: 5px;
 	float: left;
-	width: 53%;
-	margin-top: 5px;
-	margin-left: 5px;
+	width: 100%;
 	position: relative;
+}
+.nano-timeline:hover,.nano-volumeslider:hover{
+	cursor: col-resize;
 }
 .nano-buffer,.nano-progress{
 	height: 100%;
@@ -93,13 +98,16 @@ height: 100%;
 	float: left;
 	height: 100%;
 	margin-left: 5px;
-	margin-top: 7px;
+	padding-top: 7px;
+	box-sizing: border-box;
 }
 .nano-mute{
 	background: #fff;
 	width: 5px;
 	height: 5px;
-	position: absolute;
+	position: relative;
+display: block;
+float: left;
 }
 .nano-mute:before,
 .nano-mute:after{
@@ -127,7 +135,8 @@ height: 100%;
 	background:#000;
 	width: 70px;
 	height: 5px;
-	margin-left: 15px;
+	margin-left: 7px;
+float: left;
 }
 .nano-volumelevel{
 	height: 100%;
@@ -151,18 +160,54 @@ height: 100%;
 	height: 7px;
 	margin: 1px;
 	background: #555;
-	-webkit-transition: all 1s;
+/*	-webkit-transition: all 1s;
 	-moz-transition: all 1s;
 	-ms-transition: all 1s;
 	-o-transition: all 1s;
-	transition: all 1s;
+	transition: all 1s;*/
 }
 .nano-fullscreen:hover:before{
 	width: 13px;
 	height: 10px;
-	-webkit-transition: all 1s;
-	-moz-transition: all 1s;
-	-ms-transition: all 1s;
-	-o-transition: all 1s;
-	transition: all 1s;
+	-webkit-transition: all 0.51s;
+	-moz-transition: all 0.51s;
+	-ms-transition: all 0.51s;
+	-o-transition: all 0.51s;
+	transition: all 0.51s;
+}
+
+
+
+:-webkit-full-screen {
+  /* properties */
+}
+
+:-moz-full-screen {
+  /* properties */
+}
+
+:-ms-fullscreen {
+  /* properties */
+}
+
+:full-screen { /*pre-spec */
+  /* properties */
+}
+
+:fullscreen { /* spec */
+  /* properties */
+}
+
+/* deeper elements */
+:-webkit-full-screen video {
+  width: 100%;
+  height: 100%;
+}
+
+/* styling the backdrop*/
+::backdrop {
+  /* properties */
+}
+::-ms-backdrop {
+  /* properties */
 }
